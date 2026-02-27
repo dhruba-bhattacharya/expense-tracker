@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseFlow • Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="settings">
+    <div class="noise"></div><div class="scanline"></div>
+    <aside class="icon-rail glass">
+      <a class="rail-item" href="index.html" title="Main">◎</a>
+      <a class="rail-item" href="insights.html" title="Insights">◍</a>
+      <a class="rail-item" href="history.html" title="History">◴</a>
+      <a class="rail-item active" href="settings.html" title="Settings">◌</a>
+    </aside>
+    <main class="frame content-page">
+      <header class="page-head"><h1>Settings</h1><button id="themeToggle" class="theme-toggle">◐</button></header>
+      <section class="panel glass">
+        <h2>Add Account</h2>
+        <form id="accountForm" class="stack-form">
+          <input name="name" type="text" placeholder="Account name" required />
+          <input name="balance" type="number" min="0" step="0.01" placeholder="Opening balance" required />
+          <button class="btn-primary" type="submit">Add Account</button>
+        </form>
+        <ul id="accountList" class="list compact"></ul>
+      </section>
+      <section class="panel glass">
+        <h2>Add Credit Card</h2>
+        <form id="cardForm" class="stack-form">
+          <input name="name" type="text" placeholder="Card name" required />
+          <input name="limit" type="number" min="1" step="0.01" placeholder="Card limit" required />
+          <input name="used" type="number" min="0" step="0.01" placeholder="Currently used (optional)" />
+          <button class="btn-primary" type="submit">Add Card</button>
+        </form>
+        <ul id="cardList" class="list compact"></ul>
+      </section>
+      <section class="panel glass full-span">
+        <h2>Preferences</h2>
+        <form id="preferencesForm" class="grid-form">
+          <label>Currency symbol<input name="currency" type="text" maxlength="3" placeholder="₹" /></label>
+          <label>Monthly budget<input name="monthlyBudget" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+          <button class="btn-primary" type="submit">Save Preferences</button>
+        </form>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

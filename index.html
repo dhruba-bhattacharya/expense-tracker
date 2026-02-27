@@ -3,97 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ExpenseFlow • Tracker</title>
+    <title>ExpenseFlow • Add Transaction</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="main">
-    <div class="background-glow"></div>
-    <header class="topbar glass">
-      <div class="brand">
-        <span class="brand-dot"></span>
-        <h1>ExpenseFlow</h1>
-      </div>
-      <nav class="main-nav">
-        <a class="active" href="index.html">Main</a>
-        <a href="insights.html">Insights</a>
-        <a href="history.html">History</a>
-        <a href="settings.html">Settings</a>
-      </nav>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-    </header>
+    <div class="ambient"></div>
+    <aside class="icon-rail glass">
+      <a class="rail-item active" href="index.html" title="Main">🏠</a>
+      <a class="rail-item" href="insights.html" title="Insights">📊</a>
+      <a class="rail-item" href="history.html" title="History">🕒</a>
+      <a class="rail-item" href="settings.html" title="Settings">⚙️</a>
+    </aside>
 
-    <main class="layout layout-main">
-      <section class="panel glass floating-card">
-        <h2>Add Transaction</h2>
-        <p class="subtitle">Track income and expenses with account + transaction details.</p>
-        <form id="transactionForm" class="grid-form">
-          <label>
-            Type
-            <select name="kind" required>
+    <main class="main-stage">
+      <header class="hero-top glass">
+        <h1>ExpenseFlow</h1>
+        <p>Track money with style.</p>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+      </header>
+
+      <section id="transactionHero" class="transaction-hero glass">
+        <div class="hero-headline">
+          <h2>Add Expense / Income</h2>
+          <small>Fast entry • Animated dashboard • Smart defaults</small>
+        </div>
+
+        <form id="transactionForm" class="hero-form">
+          <div class="input-wrap type-switch">
+            <label for="kind">Type</label>
+            <select name="kind" id="kind" required>
               <option value="expense">Expense</option>
               <option value="income">Income</option>
             </select>
-          </label>
-          <label>
-            Amount
-            <input type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
-          </label>
-          <label>
-            Category
-            <input type="text" name="category" placeholder="Food / Salary / Fuel" required />
-          </label>
-          <label>
-            Account / Card
+          </div>
+
+          <div class="input-wrap amount-wrap">
+            <label for="amount">Amount</label>
+            <input id="amount" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
+          </div>
+
+          <div class="input-wrap">
+            <label for="category">Category</label>
+            <select name="category" id="category" required>
+              <option value="Food">Food</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Transport">Transport</option>
+              <option value="Rent">Rent</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Gadgets">Electronic Gadgets</option>
+              <option value="Health">Health</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Travel">Travel</option>
+              <option value="Salary">Salary</option>
+              <option value="Investment">Investment</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="input-wrap">
+            <label for="accountSelect">Account / Card</label>
             <select name="account" id="accountSelect" required></select>
-          </label>
-          <label>
-            Debit / Credit
-            <select name="payment" required>
+          </div>
+
+          <div class="input-wrap">
+            <label for="payment">Debit / Credit</label>
+            <select name="payment" id="payment" required>
               <option value="debit">Debit</option>
               <option value="credit">Credit</option>
             </select>
-          </label>
-          <label>
-            Date
+          </div>
+
+          <div class="input-wrap">
+            <label for="dateInput">Date</label>
             <input type="date" name="date" id="dateInput" required />
-          </label>
-          <label class="full-width">
-            Note
-            <input type="text" name="note" placeholder="Optional details" />
-          </label>
-          <button class="btn-primary full-width" type="submit">Add Transaction</button>
+          </div>
+
+          <div class="input-wrap full-width">
+            <label for="note">Note</label>
+            <input id="note" type="text" name="note" placeholder="Optional note" />
+          </div>
+
+          <div class="hero-actions full-width">
+            <button class="btn-primary" type="submit">+ Add Transaction</button>
+            <a class="ghost-link" href="settings.html">Manage accounts/cards</a>
+          </div>
+          <p id="setupHint" class="setup-hint"></p>
         </form>
       </section>
 
-      <section class="panel-group">
-        <article class="panel glass stat-card">
-          <h3>Net Balance</h3>
-          <p id="netBalance" class="stat-value">₹0</p>
-          <small>Across all debit accounts</small>
-        </article>
-        <article class="panel glass stat-card">
-          <h3>Monthly Spend</h3>
-          <p id="monthlySpend" class="stat-value">₹0</p>
-          <small id="budgetHint">No monthly budget set yet</small>
-        </article>
-        <article class="panel glass stat-card">
-          <h3>Credit Used</h3>
-          <p id="creditUsed" class="stat-value">₹0</p>
-          <small>Total on all cards</small>
-        </article>
+      <section class="mini-kpis">
+        <article class="kpi glass"><span>Balance</span><strong id="netBalance">₹0</strong></article>
+        <article class="kpi glass"><span>Month Spend</span><strong id="monthlySpend">₹0</strong><small id="budgetHint">No monthly budget set</small></article>
+        <article class="kpi glass"><span>Card Used</span><strong id="creditUsed">₹0</strong></article>
       </section>
 
-      <section class="panel glass full-span">
-        <div class="panel-heading">
-          <h3>Recent Activity</h3>
-          <a class="link" href="history.html">View all →</a>
-        </div>
+      <section class="recent-strip glass">
+        <div class="panel-heading"><h3>Recent</h3><a href="history.html">All →</a></div>
         <ul id="recentList" class="list"></ul>
       </section>
     </main>

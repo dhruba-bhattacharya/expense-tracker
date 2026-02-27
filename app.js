@@ -1,9 +1,9 @@
-const STORAGE_KEY = "expenseflow_v1";
+const STORAGE_KEY = "expenseflow_v2";
 
 function defaultState() {
   return {
-    accounts: [{ id: crypto.randomUUID(), name: "Main Bank", balance: 5000, type: "account" }],
-    creditCards: [{ id: crypto.randomUUID(), name: "Primary CC", limit: 100000, used: 0, type: "card" }],
+    accounts: [],
+    creditCards: [],
     transactions: [],
     settings: { currency: "₹", monthlyBudget: 0, theme: "dark" },
   };
@@ -23,20 +23,40 @@ function saveState(state) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-const fmt = (amount, state) => `${state.settings.currency || "₹"}${Number(amount).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 const today = () => new Date().toISOString().slice(0, 10);
+const fmt = (amount, state) => `${state.settings.currency || "₹"}${Number(amount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
 function initTheme(state) {
   if (state.settings.theme === "light") document.body.classList.add("light");
   const toggle = document.getElementById("themeToggle");
   if (!toggle) return;
-  toggle.textContent = document.body.classList.contains("light") ? "☀️" : "🌙";
+  const sync = () => (toggle.textContent = document.body.classList.contains("light") ? "☀️" : "🌙");
+  sync();
   toggle.onclick = () => {
     document.body.classList.toggle("light");
     state.settings.theme = document.body.classList.contains("light") ? "light" : "dark";
-    toggle.textContent = state.settings.theme === "light" ? "☀️" : "🌙";
+    sync();
     saveState(state);
   };
+}
+
+function initAmbientEffects() {
+  window.addEventListener("pointermove", (e) => {
+    document.documentElement.style.setProperty("--x", `${e.clientX}px`);
+    document.documentElement.style.setProperty("--y", `${e.clientY}px`);
+  });
+
+  const hero = document.getElementById("transactionHero");
+  if (!hero) return;
+  hero.addEventListener("pointermove", (e) => {
+    const r = hero.getBoundingClientRect();
+    const rx = ((e.clientY - r.top) / r.height - 0.5) * -2.5;
+    const ry = ((e.clientX - r.left) / r.width - 0.5) * 2.5;
+    hero.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  hero.addEventListener("pointerleave", () => {
+    hero.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+  });
 }
 
 function findEntityName(state, id) {
@@ -48,25 +68,54 @@ function bindMainPage(state) {
   if (!form) return;
 
   const select = document.getElementById("accountSelect");
-  const options = [...state.accounts, ...state.creditCards].map((item) => `<option value="${item.id}">${item.name}</option>`).join("");
-  select.innerHTML = options;
+  const submitBtn = form.querySelector("button[type='submit']");
+  const setupHint = document.getElementById("setupHint");
 
+  const renderOptions = () => {
+    const hasAccounts = state.accounts.length > 0;
+    const hasCards = state.creditCards.length > 0;
+    const parts = [];
+    if (hasAccounts) {
+      parts.push(`<optgroup label="Accounts">${state.accounts.map((a) => `<option value="${a.id}">${a.name}</option>`).join("")}</optgroup>`);
+    }
+    if (hasCards) {
+      parts.push(`<optgroup label="Cards">${state.creditCards.map((c) => `<option value="${c.id}">${c.name}</option>`).join("")}</optgroup>`);
+    }
+
+    if (!parts.length) {
+      select.innerHTML = '<option value="">No account/card configured</option>';
+      select.disabled = true;
+      submitBtn.disabled = true;
+      setupHint.textContent = "Add at least one account or card in Settings to start tracking.";
+    } else {
+      select.innerHTML = parts.join("");
+      select.disabled = false;
+      submitBtn.disabled = false;
+      setupHint.textContent = "";
+    }
+  };
+
+  renderOptions();
   document.getElementById("dateInput").value = today();
+
+  select.onchange = () => {
+    const chosenId = select.value;
+    const isCard = state.creditCards.some((c) => c.id === chosenId);
+    const pay = document.getElementById("payment");
+    pay.value = isCard ? "credit" : "debit";
+  };
 
   form.onsubmit = (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
     const amount = Number(data.amount);
-    const entity = state.accounts.find((a) => a.id === data.account) || state.creditCards.find((c) => c.id === data.account);
+    if (!data.account || amount <= 0) return;
 
-    if (!entity || amount <= 0) return;
+    const account = state.accounts.find((a) => a.id === data.account);
+    const card = state.creditCards.find((c) => c.id === data.account);
 
-    if (entity.type === "account" && data.payment === "debit") {
-      entity.balance += data.kind === "income" ? amount : -amount;
-    }
-    if (entity.type === "card" && data.payment === "credit") {
-      entity.used = Math.max(0, entity.used + (data.kind === "expense" ? amount : -amount));
-    }
+    if (account && data.payment === "debit") account.balance += data.kind === "income" ? amount : -amount;
+    if (card && data.payment === "credit") card.used = Math.max(0, card.used + (data.kind === "expense" ? amount : -amount));
 
     state.transactions.unshift({
       id: crypto.randomUUID(),
@@ -83,6 +132,7 @@ function bindMainPage(state) {
     saveState(state);
     form.reset();
     document.getElementById("dateInput").value = today();
+    renderOptions();
     renderMain(state);
   };
 
@@ -90,38 +140,34 @@ function bindMainPage(state) {
 }
 
 function renderMain(state) {
-  const netBalance = state.accounts.reduce((sum, a) => sum + a.balance, 0);
-  const creditUsed = state.creditCards.reduce((sum, c) => sum + c.used, 0);
-  const monthKey = new Date().toISOString().slice(0, 7);
-  const monthlySpend = state.transactions
-    .filter((t) => t.kind === "expense" && t.date.startsWith(monthKey))
-    .reduce((sum, t) => sum + t.amount, 0);
+  const netBalance = state.accounts.reduce((s, a) => s + a.balance, 0);
+  const creditUsed = state.creditCards.reduce((s, c) => s + c.used, 0);
+  const month = new Date().toISOString().slice(0, 7);
+  const monthlySpend = state.transactions.filter((t) => t.kind === "expense" && t.date.startsWith(month)).reduce((s, t) => s + t.amount, 0);
 
-  document.getElementById("netBalance").textContent = fmt(netBalance, state);
-  document.getElementById("creditUsed").textContent = fmt(creditUsed, state);
-  document.getElementById("monthlySpend").textContent = fmt(monthlySpend, state);
+  const net = document.getElementById("netBalance");
+  const cre = document.getElementById("creditUsed");
+  const mon = document.getElementById("monthlySpend");
+  if (net) net.textContent = fmt(netBalance, state);
+  if (cre) cre.textContent = fmt(creditUsed, state);
+  if (mon) mon.textContent = fmt(monthlySpend, state);
 
   const budgetHint = document.getElementById("budgetHint");
-  const budget = Number(state.settings.monthlyBudget || 0);
-  budgetHint.textContent = budget
-    ? `${((monthlySpend / budget) * 100).toFixed(1)}% of budget used`
-    : "No monthly budget set yet";
+  if (budgetHint) {
+    const b = Number(state.settings.monthlyBudget || 0);
+    budgetHint.textContent = b ? `${((monthlySpend / b) * 100).toFixed(1)}% of budget` : "No monthly budget set";
+  }
 
-  const recent = state.transactions.slice(0, 8);
   const list = document.getElementById("recentList");
+  if (!list) return;
+  const recent = state.transactions.slice(0, 7);
   list.innerHTML = recent.length
     ? recent
         .map(
-          (t) => `<li>
-      <div>
-        <strong>${t.category}</strong>
-        <div>${findEntityName(state, t.accountId)} · ${t.date}</div>
-      </div>
-      <strong class="${t.kind === "income" ? "badge-income" : "badge-expense"}">${t.kind === "income" ? "+" : "-"}${fmt(t.amount, state)}</strong>
-    </li>`
+          (t) => `<li><div><strong>${t.category}</strong><div>${findEntityName(state, t.accountId)} • ${t.date}</div></div><strong class="${t.kind === "income" ? "badge-income" : "badge-expense"}">${t.kind === "income" ? "+" : "-"}${fmt(t.amount, state)}</strong></li>`
         )
         .join("")
-    : "<li>No transactions yet. Add your first one 👆</li>";
+    : "<li>No transactions yet.</li>";
 }
 
 function bindSettings(state) {
@@ -131,14 +177,17 @@ function bindSettings(state) {
   if (!accountForm) return;
 
   const render = () => {
-    document.getElementById("accountList").innerHTML = state.accounts
-      .map((a) => `<li><span>${a.name}</span><strong>${fmt(a.balance, state)}</strong></li>`)
-      .join("");
-    document.getElementById("cardList").innerHTML = state.creditCards
-      .map((c) => `<li><span>${c.name} (${((c.used / c.limit) * 100 || 0).toFixed(1)}%)</span><strong>${fmt(c.used, state)} / ${fmt(c.limit, state)}</strong></li>`)
-      .join("");
+    document.getElementById("accountList").innerHTML = state.accounts.length
+      ? state.accounts.map((a) => `<li><span>${a.name}</span><strong>${fmt(a.balance, state)}</strong></li>`).join("")
+      : "<li>No accounts added.</li>";
 
-    prefForm.currency.value = state.settings.currency;
+    document.getElementById("cardList").innerHTML = state.creditCards.length
+      ? state.creditCards
+          .map((c) => `<li><span>${c.name} (${((c.used / c.limit) * 100 || 0).toFixed(1)}%)</span><strong>${fmt(c.used, state)} / ${fmt(c.limit, state)}</strong></li>`)
+          .join("")
+      : "<li>No cards added.</li>";
+
+    prefForm.currency.value = state.settings.currency || "₹";
     prefForm.monthlyBudget.value = state.settings.monthlyBudget || "";
   };
 
@@ -154,13 +203,7 @@ function bindSettings(state) {
   cardForm.onsubmit = (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(cardForm).entries());
-    state.creditCards.push({
-      id: crypto.randomUUID(),
-      name: data.name,
-      limit: Number(data.limit),
-      used: Number(data.used || 0),
-      type: "card",
-    });
+    state.creditCards.push({ id: crypto.randomUUID(), name: data.name, limit: Number(data.limit), used: Number(data.used || 0), type: "card" });
     saveState(state);
     cardForm.reset();
     render();
@@ -188,24 +231,18 @@ function bindInsights(state) {
     return acc;
   }, {});
 
-  const categoryHtml = Object.entries(byCategory)
+  document.getElementById("categoryBreakdown").innerHTML = Object.entries(byCategory)
     .sort((a, b) => b[1] - a[1])
     .map(([cat, val]) => {
       const pct = totalExpense ? (val / totalExpense) * 100 : 0;
-      return `<div class="bar-row"><div>${cat} <strong>${fmt(val, state)}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div>`;
+      return `<div>${cat} <strong>${fmt(val, state)}</strong><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div>`;
     })
-    .join("");
-  document.getElementById("categoryBreakdown").innerHTML = categoryHtml || "No expense data yet.";
+    .join("") || "No expense data yet.";
 
-  document.getElementById("accountBalances").innerHTML = state.accounts
-    .map((a) => `<article class="metric-box"><small>${a.name}</small><h3>${fmt(a.balance, state)}</h3></article>`)
-    .join("");
+  document.getElementById("accountBalances").innerHTML = state.accounts.map((a) => `<article class="metric-box"><small>${a.name}</small><h3>${fmt(a.balance, state)}</h3></article>`).join("") || "No accounts yet.";
 
   document.getElementById("ccUtilisation").innerHTML = state.creditCards
-    .map((c) => {
-      const pct = c.limit ? (c.used / c.limit) * 100 : 0;
-      return `<div class="bar-row"><div>${c.name} <strong>${pct.toFixed(1)}%</strong></div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, pct)}%"></div></div></div>`;
-    })
+    .map((c) => `<div>${c.name} <strong>${((c.used / c.limit) * 100 || 0).toFixed(1)}%</strong><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, (c.used / c.limit) * 100 || 0)}%"></div></div></div>`)
     .join("") || "No cards yet.";
 
   const byMonth = state.transactions.reduce((acc, t) => {
@@ -214,44 +251,27 @@ function bindInsights(state) {
     acc[key][t.kind] += t.amount;
     return acc;
   }, {});
-
   const months = Object.entries(byMonth).sort(([a], [b]) => a.localeCompare(b)).slice(-8);
-  const maxNet = Math.max(...months.map(([, v]) => Math.max(1, v.income - v.expense)), 1);
-  document.getElementById("monthlyTrend").innerHTML = months
-    .map(([month, val]) => {
-      const net = Math.max(0, val.income - val.expense);
-      const h = (net / maxNet) * 180 + 24;
-      return `<div class="trend-bar" style="height:${h}px" title="Net ${fmt(net, state)}"><span>${month.slice(5)}</span></div>`;
-    })
-    .join("") || "No monthly trend yet.";
+  const maxNet = Math.max(...months.map(([, v]) => Math.max(v.income - v.expense, 1)), 1);
+  document.getElementById("monthlyTrend").innerHTML = months.map(([m, v]) => `<div class="trend-bar" style="height:${((Math.max(v.income - v.expense, 0) / maxNet) * 180 + 24)}px"><span>${m.slice(5)}</span></div>`).join("") || "No monthly trend yet.";
 }
 
 function bindHistory(state) {
   const body = document.getElementById("historyBody");
   if (!body) return;
-
   const typeEl = document.getElementById("filterType");
   const catEl = document.getElementById("filterCategory");
 
   const render = () => {
     const type = typeEl.value;
-    const categoryTerm = catEl.value.trim().toLowerCase();
-    const rows = state.transactions.filter((t) => (type === "all" || t.kind === type) && t.category.toLowerCase().includes(categoryTerm));
+    const cat = catEl.value.trim().toLowerCase();
+    const rows = state.transactions.filter((t) => (type === "all" || t.kind === type) && t.category.toLowerCase().includes(cat));
     body.innerHTML = rows
       .map(
-        (t) => `<tr>
-      <td>${t.date}</td>
-      <td class="${t.kind === "income" ? "badge-income" : "badge-expense"}">${t.kind}</td>
-      <td>${t.category}</td>
-      <td>${findEntityName(state, t.accountId)}</td>
-      <td>${t.payment}</td>
-      <td>${fmt(t.amount, state)}</td>
-      <td>${t.note || "—"}</td>
-    </tr>`
+        (t) => `<tr><td>${t.date}</td><td class="${t.kind === "income" ? "badge-income" : "badge-expense"}">${t.kind}</td><td>${t.category}</td><td>${findEntityName(state, t.accountId)}</td><td>${t.payment}</td><td>${fmt(t.amount, state)}</td><td>${t.note || "—"}</td></tr>`
       )
       .join("");
   };
-
   typeEl.oninput = render;
   catEl.oninput = render;
 
@@ -270,6 +290,7 @@ function bindHistory(state) {
 (function init() {
   const state = loadState();
   initTheme(state);
+  initAmbientEffects();
   bindMainPage(state);
   bindSettings(state);
   bindInsights(state);

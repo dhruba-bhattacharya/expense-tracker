@@ -6,26 +6,19 @@
     <title>ExpenseFlow • Settings</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="settings">
-    <div class="background-glow"></div>
-    <header class="topbar glass">
-      <div class="brand"><span class="brand-dot"></span><h1>ExpenseFlow</h1></div>
-      <nav class="main-nav">
-        <a href="index.html">Main</a>
-        <a href="insights.html">Insights</a>
-        <a href="history.html">History</a>
-        <a class="active" href="settings.html">Settings</a>
-      </nav>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
-    </header>
-
-    <main class="layout">
+    <div class="ambient"></div>
+    <aside class="icon-rail glass">
+      <a class="rail-item" href="index.html" title="Main">🏠</a>
+      <a class="rail-item" href="insights.html" title="Insights">📊</a>
+      <a class="rail-item" href="history.html" title="History">🕒</a>
+      <a class="rail-item active" href="settings.html" title="Settings">⚙️</a>
+    </aside>
+    <main class="content-page">
+      <header class="page-head glass"><h1>Settings</h1><button id="themeToggle" class="theme-toggle">🌙</button></header>
       <section class="panel glass">
         <h2>Add Account</h2>
         <form id="accountForm" class="stack-form">
@@ -35,7 +28,6 @@
         </form>
         <ul id="accountList" class="list compact"></ul>
       </section>
-
       <section class="panel glass">
         <h2>Add Credit Card</h2>
         <form id="cardForm" class="stack-form">
@@ -46,23 +38,15 @@
         </form>
         <ul id="cardList" class="list compact"></ul>
       </section>
-
       <section class="panel glass full-span">
         <h2>Preferences</h2>
         <form id="preferencesForm" class="grid-form">
-          <label>
-            Currency symbol
-            <input name="currency" type="text" maxlength="3" placeholder="₹" />
-          </label>
-          <label>
-            Monthly budget
-            <input name="monthlyBudget" type="number" min="0" step="0.01" placeholder="0.00" />
-          </label>
+          <label>Currency symbol<input name="currency" type="text" maxlength="3" placeholder="₹" /></label>
+          <label>Monthly budget<input name="monthlyBudget" type="number" min="0" step="0.01" placeholder="0.00" /></label>
           <button class="btn-primary" type="submit">Save Preferences</button>
         </form>
       </section>
     </main>
-
     <script src="app.js"></script>
   </body>
 </html>

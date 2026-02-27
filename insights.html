@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseFlow • Insights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="insights">
+    <div class="background-glow"></div>
+    <header class="topbar glass">
+      <div class="brand"><span class="brand-dot"></span><h1>ExpenseFlow</h1></div>
+      <nav class="main-nav">
+        <a href="index.html">Main</a>
+        <a class="active" href="insights.html">Insights</a>
+        <a href="history.html">History</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel glass full-span">
+        <h2>Category Breakdown</h2>
+        <div id="categoryBreakdown" class="bar-list"></div>
+      </section>
+
+      <section class="panel glass">
+        <h2>Account Balances</h2>
+        <div id="accountBalances" class="metric-grid"></div>
+      </section>
+
+      <section class="panel glass">
+        <h2>CC Utilisation</h2>
+        <div id="ccUtilisation" class="bar-list"></div>
+      </section>
+
+      <section class="panel glass full-span">
+        <h2>Historical Monthly Trend</h2>
+        <div id="monthlyTrend" class="trend-chart"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

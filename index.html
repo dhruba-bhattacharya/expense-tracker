@@ -3,108 +3,86 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ExpenseFlow • Add Transaction</title>
+    <title>ExpenseFlow • Neon Ledger</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="main">
-    <div class="ambient"></div>
+    <div class="noise"></div>
+    <div class="scanline"></div>
+
     <aside class="icon-rail glass">
-      <a class="rail-item active" href="index.html" title="Main">🏠</a>
-      <a class="rail-item" href="insights.html" title="Insights">📊</a>
-      <a class="rail-item" href="history.html" title="History">🕒</a>
-      <a class="rail-item" href="settings.html" title="Settings">⚙️</a>
+      <a class="rail-item active" href="index.html" title="Main">◎</a>
+      <a class="rail-item" href="insights.html" title="Insights">◍</a>
+      <a class="rail-item" href="history.html" title="History">◴</a>
+      <a class="rail-item" href="settings.html" title="Settings">◌</a>
     </aside>
 
-    <main class="main-stage">
-      <header class="hero-top glass">
-        <h1>ExpenseFlow</h1>
-        <p>Track money with style.</p>
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <main class="frame main-stage">
+      <header class="hero-top">
+        <div class="tiny-nav">•DEVICES&nbsp;&nbsp;•FEATURES&nbsp;&nbsp;•TECH SPECS&nbsp;&nbsp;•FAQ</div>
+        <h1>E X P E N S E F L O W</h1>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">◐</button>
       </header>
 
-      <section id="transactionHero" class="transaction-hero glass">
-        <div class="hero-headline">
-          <h2>Add Expense / Income</h2>
-          <small>Fast entry • Animated dashboard • Smart defaults</small>
-        </div>
+      <section id="transactionHero" class="transaction-hero grand-center glass">
+        <p class="eyebrow center">THE WORLD'S CLEANEST MONEY INPUT</p>
 
-        <form id="transactionForm" class="hero-form">
-          <div class="input-wrap type-switch">
-            <label for="kind">Type</label>
-            <select name="kind" id="kind" required>
-              <option value="expense">Expense</option>
-              <option value="income">Income</option>
-            </select>
+        <form id="transactionForm" class="grand-form">
+          <div class="amount-stage">
+            <input id="amount" class="amount-hero" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
           </div>
 
-          <div class="input-wrap amount-wrap">
-            <label for="amount">Amount</label>
-            <input id="amount" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
+          <div class="compact-grid">
+            <label class="mini-field">
+              <span>Type</span>
+              <select name="kind" id="kind" required>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </label>
+
+            <label class="mini-field">
+              <span>Category</span>
+              <select name="category" id="category" required>
+                <option>Food</option><option>Groceries</option><option>Transport</option><option>Rent</option>
+                <option>Utilities</option><option>Entertainment</option><option>Electronics</option><option>Electronic Gadgets</option>
+                <option>Health</option><option>Shopping</option><option>Travel</option><option>Salary</option><option>Investment</option><option>Other</option>
+              </select>
+            </label>
+
+            <label class="mini-field">
+              <span>Account / Card</span>
+              <select name="account" id="accountSelect" required></select>
+            </label>
+
+            <label class="mini-field">
+              <span>Debit / Credit</span>
+              <select name="payment" id="payment" required>
+                <option value="debit">Debit</option>
+                <option value="credit">Credit</option>
+              </select>
+            </label>
+
+            <label class="mini-field">
+              <span>Date</span>
+              <input type="date" name="date" id="dateInput" required />
+            </label>
+
+            <label class="mini-field wide">
+              <span>Note</span>
+              <input id="note" type="text" name="note" placeholder="Optional note" />
+            </label>
           </div>
 
-          <div class="input-wrap">
-            <label for="category">Category</label>
-            <select name="category" id="category" required>
-              <option value="Food">Food</option>
-              <option value="Groceries">Groceries</option>
-              <option value="Transport">Transport</option>
-              <option value="Rent">Rent</option>
-              <option value="Utilities">Utilities</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Electronics">Electronics</option>
-              <option value="Gadgets">Electronic Gadgets</option>
-              <option value="Health">Health</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Travel">Travel</option>
-              <option value="Salary">Salary</option>
-              <option value="Investment">Investment</option>
-              <option value="Other">Other</option>
-            </select>
+          <div class="hero-actions center">
+            <button class="btn-primary" type="submit">ADD TRANSACTION</button>
+            <a class="ghost-link" href="settings.html">SETUP ACCOUNTS/CARDS</a>
           </div>
-
-          <div class="input-wrap">
-            <label for="accountSelect">Account / Card</label>
-            <select name="account" id="accountSelect" required></select>
-          </div>
-
-          <div class="input-wrap">
-            <label for="payment">Debit / Credit</label>
-            <select name="payment" id="payment" required>
-              <option value="debit">Debit</option>
-              <option value="credit">Credit</option>
-            </select>
-          </div>
-
-          <div class="input-wrap">
-            <label for="dateInput">Date</label>
-            <input type="date" name="date" id="dateInput" required />
-          </div>
-
-          <div class="input-wrap full-width">
-            <label for="note">Note</label>
-            <input id="note" type="text" name="note" placeholder="Optional note" />
-          </div>
-
-          <div class="hero-actions full-width">
-            <button class="btn-primary" type="submit">+ Add Transaction</button>
-            <a class="ghost-link" href="settings.html">Manage accounts/cards</a>
-          </div>
-          <p id="setupHint" class="setup-hint"></p>
+          <p id="setupHint" class="setup-hint center"></p>
         </form>
-      </section>
-
-      <section class="mini-kpis">
-        <article class="kpi glass"><span>Balance</span><strong id="netBalance">₹0</strong></article>
-        <article class="kpi glass"><span>Month Spend</span><strong id="monthlySpend">₹0</strong><small id="budgetHint">No monthly budget set</small></article>
-        <article class="kpi glass"><span>Card Used</span><strong id="creditUsed">₹0</strong></article>
-      </section>
-
-      <section class="recent-strip glass">
-        <div class="panel-heading"><h3>Recent</h3><a href="history.html">All →</a></div>
-        <ul id="recentList" class="list"></ul>
       </section>
     </main>
 

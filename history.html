@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseFlow • History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="history">
+    <div class="background-glow"></div>
+    <header class="topbar glass">
+      <div class="brand"><span class="brand-dot"></span><h1>ExpenseFlow</h1></div>
+      <nav class="main-nav">
+        <a href="index.html">Main</a>
+        <a href="insights.html">Insights</a>
+        <a class="active" href="history.html">History</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel glass full-span">
+        <div class="panel-heading">
+          <h2>All Transactions</h2>
+          <button id="exportBtn" class="btn-secondary">Export JSON</button>
+        </div>
+        <div class="filter-row">
+          <select id="filterType">
+            <option value="all">All types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <input id="filterCategory" type="text" placeholder="Filter by category" />
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Type</th><th>Category</th><th>Account/Card</th><th>Method</th><th>Amount</th><th>Note</th></tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

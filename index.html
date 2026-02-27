@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExpenseFlow • Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="main">
+    <div class="background-glow"></div>
+    <header class="topbar glass">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <h1>ExpenseFlow</h1>
+      </div>
+      <nav class="main-nav">
+        <a class="active" href="index.html">Main</a>
+        <a href="insights.html">Insights</a>
+        <a href="history.html">History</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
+
+    <main class="layout layout-main">
+      <section class="panel glass floating-card">
+        <h2>Add Transaction</h2>
+        <p class="subtitle">Track income and expenses with account + transaction details.</p>
+        <form id="transactionForm" class="grid-form">
+          <label>
+            Type
+            <select name="kind" required>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </label>
+          <label>
+            Amount
+            <input type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
+          </label>
+          <label>
+            Category
+            <input type="text" name="category" placeholder="Food / Salary / Fuel" required />
+          </label>
+          <label>
+            Account / Card
+            <select name="account" id="accountSelect" required></select>
+          </label>
+          <label>
+            Debit / Credit
+            <select name="payment" required>
+              <option value="debit">Debit</option>
+              <option value="credit">Credit</option>
+            </select>
+          </label>
+          <label>
+            Date
+            <input type="date" name="date" id="dateInput" required />
+          </label>
+          <label class="full-width">
+            Note
+            <input type="text" name="note" placeholder="Optional details" />
+          </label>
+          <button class="btn-primary full-width" type="submit">Add Transaction</button>
+        </form>
+      </section>
+
+      <section class="panel-group">
+        <article class="panel glass stat-card">
+          <h3>Net Balance</h3>
+          <p id="netBalance" class="stat-value">₹0</p>
+          <small>Across all debit accounts</small>
+        </article>
+        <article class="panel glass stat-card">
+          <h3>Monthly Spend</h3>
+          <p id="monthlySpend" class="stat-value">₹0</p>
+          <small id="budgetHint">No monthly budget set yet</small>
+        </article>
+        <article class="panel glass stat-card">
+          <h3>Credit Used</h3>
+          <p id="creditUsed" class="stat-value">₹0</p>
+          <small>Total on all cards</small>
+        </article>
+      </section>
+
+      <section class="panel glass full-span">
+        <div class="panel-heading">
+          <h3>Recent Activity</h3>
+          <a class="link" href="history.html">View all →</a>
+        </div>
+        <ul id="recentList" class="list"></ul>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

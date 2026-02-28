@@ -6,7 +6,7 @@
     <title>ExpenseFlow • Neon Ledger</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-page="main">
@@ -35,46 +35,13 @@
             <input id="amount" class="amount-hero" type="number" name="amount" min="0.01" step="0.01" placeholder="0.00" required />
           </div>
 
-          <div class="compact-grid">
-            <label class="mini-field">
-              <span>Type</span>
-              <select name="kind" id="kind" required>
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
-              </select>
-            </label>
-
-            <label class="mini-field">
-              <span>Category</span>
-              <select name="category" id="category" required>
-                <option>Food</option><option>Groceries</option><option>Transport</option><option>Rent</option>
-                <option>Utilities</option><option>Entertainment</option><option>Electronics</option><option>Electronic Gadgets</option>
-                <option>Health</option><option>Shopping</option><option>Travel</option><option>Salary</option><option>Investment</option><option>Other</option>
-              </select>
-            </label>
-
-            <label class="mini-field">
-              <span>Account / Card</span>
-              <select name="account" id="accountSelect" required></select>
-            </label>
-
-            <label class="mini-field">
-              <span>Debit / Credit</span>
-              <select name="payment" id="payment" required>
-                <option value="debit">Debit</option>
-                <option value="credit">Credit</option>
-              </select>
-            </label>
-
-            <label class="mini-field">
-              <span>Date</span>
-              <input type="date" name="date" id="dateInput" required />
-            </label>
-
-            <label class="mini-field wide">
-              <span>Note</span>
-              <input id="note" type="text" name="note" placeholder="Optional note" />
-            </label>
+          <div class="meta-grid">
+            <label class="meta-item"><span>TYPE</span><select name="kind" id="kind" required><option value="income">Income</option><option value="expense">Expense</option></select></label>
+            <label class="meta-item"><span>CATEGORY</span><select name="category" id="category" required><option>Food</option><option>Groceries</option><option>Transport</option><option>Rent</option><option>Utilities</option><option>Entertainment</option><option>Electronics</option><option>Electronic Gadgets</option><option>Health</option><option>Shopping</option><option>Travel</option><option>Salary</option><option>Investment</option><option>Other</option></select></label>
+            <label class="meta-item"><span>ACCOUNT</span><select name="account" id="accountSelect" required></select></label>
+            <label class="meta-item"><span>DEBIT / CREDIT</span><select name="payment" id="payment" required><option value="debit">Debit</option><option value="credit">Credit</option></select></label>
+            <label class="meta-item"><span>DATE</span><input type="date" name="date" id="dateInput" required /></label>
+            <label class="meta-item wide"><span>NOTE</span><input id="note" type="text" name="note" placeholder="Optional note" /></label>
           </div>
 
           <div class="hero-actions center">
@@ -83,6 +50,14 @@
           </div>
           <p id="setupHint" class="setup-hint center"></p>
         </form>
+
+        <nav class="mode-switch">
+          <a href="insights.html">ANALYSIS</a>
+          <span>|</span>
+          <a class="active" href="index.html">ADD</a>
+          <span>|</span>
+          <a href="settings.html">ACCOUNTS</a>
+        </nav>
       </section>
     </main>
 
